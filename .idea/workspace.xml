@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="6637518d-26c0-4544-ab95-01e1343069cd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/user/exec.sh" beforeDir="false" afterPath="$PROJECT_DIR$/apps/user/exec.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/user/rpc/user.proto" beforeDir="false" afterPath="$PROJECT_DIR$/apps/user/rpc/user.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/dockerfile/Dockerfile_user_rpc_dev" beforeDir="false" afterPath="$PROJECT_DIR$/deploy/dockerfile/Dockerfile_user_rpc_dev" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/mk/user-rpc.mk" beforeDir="false" afterPath="$PROJECT_DIR$/deploy/mk/user-rpc.mk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/script/release-test.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy/script/release-test.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/script/user-rpc-test.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy/script/user-rpc-test.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GOROOT" url="file://D:/Golang" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="2twNgH3jPtEovmu0urt6fWbAFiM" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.GoLinterPluginOnboarding": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "SHELLCHECK.PATH": "C:\\Users\\hnz\\AppData\\Roaming\\JetBrains\\GoLand2025.1\\plugins\\Shell Script\\shellcheck.exe",
+    "git-widget-placeholder": "master",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "E:/Projects/go_proj/go-chat",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "ssh.settings"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Projects\go_proj\go-chat\apps\user\rpc\etc\dev" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-gosdk-3b128438d3f6-34ac7aa8f6ab-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-251.23536.46" />
+        <option value="bundled-js-predefined-d6986cc7102b-45be767fe593-JavaScript-GO-251.23536.46" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6637518d-26c0-4544-ab95-01e1343069cd" name="Changes" comment="" />
+      <created>1741259287429</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1741259287429</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VgoProject">
+    <settings-migrated>true</settings-migrated>
+  </component>
+</project>
