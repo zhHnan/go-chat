@@ -1,0 +1,40 @@
+syntax = "v1"
+
+info (
+	title:   "User API"
+	version: "1.0.0"
+	author:  "hnz"
+)
+
+import (
+	"domain.api"
+)
+
+// ---------------- user api v1 ----------------------------
+// not need login
+@server (
+	prefix: v1/user
+	group:  user
+)
+service user {
+	@doc "用户注册"
+	@handler register
+	post /register (RegisterReq) returns (RegisterReq)
+
+	@doc "用户登录"
+	@handler login
+	post /login (LoginReq) returns (LoginReq)
+}
+
+// need login
+@server (
+	prefix: v1/user
+	group:  user
+	jwt:    JwtAuth
+)
+service user {
+	@doc "用户信息"
+	@handler detail
+	get /user (UserInfoReq) returns (UserInfoResp)
+}
+

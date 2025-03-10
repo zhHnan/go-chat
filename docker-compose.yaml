@@ -24,14 +24,14 @@ services:
       - 16379:6379
     volumes:
       - ./components/redis/data:/data
-      - ./components/redis/config/redis.conf:/usr/local/redis/config/redis.conf
+    #  - ./components/redis/config/redis.conf:/usr/local/redis/config/redis.conf
+      - ./components/redis/config/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
       TZ: Asia/Shanghai
     restart: always
     networks:
       hnz-chat:
-    command:
-      - redis-server --requirepass hnz-chat --appendonly yes
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
   mysql:
     image: mysql:latest
     container_name: mysql

@@ -61,4 +61,5 @@ service User{
     rpc Login(LoginReq) returns (LoginResp);
     rpc Register(RegisterReq) returns (RegisterResp);
     rpc GetUserInfo(GetUserInfoReq) returns (GetUserInfoResp);
+    rpc FindUser(FindUserReq) returns (FindUserResp);
 }

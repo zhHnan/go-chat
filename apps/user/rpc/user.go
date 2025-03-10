@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"go-chat/pkg/interceptor/rpcserver"
 
 	"go-chat/apps/user/rpc/internal/config"
 	"go-chat/apps/user/rpc/internal/server"
@@ -16,7 +17,9 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/dev/user.yaml", "the config file")
+// var configFile = flag.String("f", "etc/dev/user.yaml", "the config file")
+// goland 启动
+var configFile = flag.String("f", "apps/user/rpc/etc/dev/user.yaml", "the config file")
 
 func main() {
 	flag.Parse()
@@ -32,6 +35,7 @@ func main() {
 			reflection.Register(grpcServer)
 		}
 	})
+	s.AddUnaryInterceptors(rpcserver.LoginInterceptor)
 	defer s.Stop()
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
