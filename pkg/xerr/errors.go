@@ -8,6 +8,9 @@ func New(code int, msg string) error {
 	return errors.New(code, msg)
 }
 
+func NewMsg(msg string) error {
+	return errors.New(SERVER_COMMON_ERROR, msg)
+}
 func NewDBErr() error {
 	return errors.New(DATABASE_ERROR, ErrMsg(DATABASE_ERROR))
 }

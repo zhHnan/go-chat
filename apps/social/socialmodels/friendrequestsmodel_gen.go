@@ -31,8 +31,9 @@ type (
 	friendRequestsModel interface {
 		Insert(ctx context.Context, data *FriendRequests) (sql.Result, error)
 		FindOne(ctx context.Context, id uint64) (*FriendRequests, error)
-		Update(ctx context.Context, data *FriendRequests) error
+		Update(ctx context.Context, session sqlx.Session, data *FriendRequests) error
 		Delete(ctx context.Context, id uint64) error
+		Trans(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error
 		FindByUidAndReqUid(ctx context.Context, userId, reqUid string) (*FriendRequests, error)
 	}
 
@@ -95,11 +96,11 @@ func (m *defaultFriendRequestsModel) Insert(ctx context.Context, data *FriendReq
 	return ret, err
 }
 
-func (m *defaultFriendRequestsModel) Update(ctx context.Context, data *FriendRequests) error {
+func (m *defaultFriendRequestsModel) Update(ctx context.Context, session sqlx.Session, data *FriendRequests) error {
 	friendRequestsIdKey := fmt.Sprintf("%s%v", cacheFriendRequestsIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, friendRequestsRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.UserId, data.ReqUid, data.ReqMsg, data.ReqTime, data.HandleResult, data.HandleMsg, data.HandledAt, data.Id)
+		return session.ExecCtx(ctx, query, data.UserId, data.ReqUid, data.ReqMsg, data.ReqTime, data.HandleResult, data.HandleMsg, data.HandledAt, data.Id)
 	}, friendRequestsIdKey)
 	return err
 }
@@ -128,4 +129,12 @@ func (m *defaultFriendRequestsModel) FindByUidAndReqUid(ctx context.Context, use
 	default:
 		return nil, err
 	}
+}
+
+// 事
+// 事务
+func (m *defaultFriendRequestsModel) Trans(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error {
+	return m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
+		return fn(ctx, session)
+	})
 }

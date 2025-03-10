@@ -29,9 +29,11 @@ var (
 type (
 	friendsModel interface {
 		Insert(ctx context.Context, data *Friends) (sql.Result, error)
+		InsertTrans(ctx context.Context, session sqlx.Session, data ...*Friends) (sql.Result, error)
 		FindOne(ctx context.Context, id uint64) (*Friends, error)
 		Update(ctx context.Context, data *Friends) error
 		Delete(ctx context.Context, id uint64) error
+		ListByUserId(ctx context.Context, userId string) ([]*Friends, error)
 		FindByUidAndFid(ctx context.Context, userId, friendUid string) (*Friends, error)
 	}
 
@@ -57,6 +59,19 @@ func newFriendsModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option)
 	}
 }
 
+func (m *defaultFriendsModel) ListByUserId(ctx context.Context, userId string) ([]*Friends, error) {
+	query := fmt.Sprintf("select %s from %s where `user_id` = ?", friendsRows, m.table)
+	var res []*Friends
+	err := m.QueryRowNoCacheCtx(ctx, &res, query, userId)
+	switch err {
+	case nil:
+		return res, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
 func (m *defaultFriendsModel) Delete(ctx context.Context, id uint64) error {
 	friendsIdKey := fmt.Sprintf("%s%v", cacheFriendsIdPrefix, id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
@@ -92,6 +107,27 @@ func (m *defaultFriendsModel) Insert(ctx context.Context, data *Friends) (sql.Re
 	return ret, err
 }
 
+// 事务添加
+func (m *defaultFriendsModel) InsertTrans(ctx context.Context, session sqlx.Session, data ...*Friends) (sql.Result, error) {
+	var (
+		sql  strings.Builder
+		args []any
+	)
+
+	if len(data) == 0 {
+		return nil, nil
+	}
+
+	sql.WriteString(fmt.Sprintf("insert into %s (%s) values ", m.table, friendsRowsExpectAutoSet))
+	for i, item := range data {
+		sql.WriteString("(?, ?, ?, ?, ?)")
+		args = append(args, item.UserId, item.FriendUid, item.Remark, item.AddSource, item.CreatedAt)
+		if i != len(data)-1 {
+			sql.WriteString(",")
+		}
+	}
+	return session.ExecCtx(ctx, sql.String(), args...)
+}
 func (m *defaultFriendsModel) Update(ctx context.Context, data *Friends) error {
 	friendsIdKey := fmt.Sprintf("%s%v", cacheFriendsIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
