@@ -107,11 +107,10 @@ func (m *defaultFriendsModel) Insert(ctx context.Context, data *Friends) (sql.Re
 	return ret, err
 }
 
-// 事务添
+// 事务添加
 func (m *defaultFriendsModel) InsertTrans(ctx context.Context, session sqlx.Session, data ...*Friends) (sql.Result, error) {
-func (m *defaultFriendsModel) InsertTrans(ctx context.Context, session sqlx.Session, data ...*Friends) (sql.Result, error){
+	var (
 		sql  strings.Builder
-		sql strings.Builder
 		args []any
 	)
 
@@ -121,9 +120,9 @@ func (m *defaultFriendsModel) InsertTrans(ctx context.Context, session sqlx.Sess
 
 	sql.WriteString(fmt.Sprintf("insert into %s (%s) values ", m.table, friendsRowsExpectAutoSet))
 	for i, item := range data {
-		sql.WriteString("(?, ?, ?, ?, ?)")
+		sql.WriteString("(?, ?, ?, ?)")
+		args = append(args, item.UserId, item.FriendUid, item.Remark, item.AddSource)
 		if i != len(data)-1 {
-		if i != len(data) - 1 {
 			sql.WriteString(",")
 		}
 	}
