@@ -62,7 +62,7 @@ func newFriendsModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option)
 func (m *defaultFriendsModel) ListByUserId(ctx context.Context, userId string) ([]*Friends, error) {
 	query := fmt.Sprintf("select %s from %s where `user_id` = ?", friendsRows, m.table)
 	var res []*Friends
-	err := m.QueryRowNoCacheCtx(ctx, &res, query, userId)
+	err := m.QueryRowsNoCacheCtx(ctx, &res, query, userId)
 	switch err {
 	case nil:
 		return res, nil
