@@ -1,10 +1,8 @@
 
-reso_addr='registry.cn-hangzhou.aliyuncs.com/hnz-chat/user-rpc-dev'
+reso_addr='registry.cn-hangzhou.aliyuncs.com/hnz-chat/user-api-dev'
 tag='latest'
 
-pod_idb="192.168.232.12"
-
-container_name='hnz-chat-user-rpc-dev'
+container_name='hnz-chat-user-api-dev'
 
 docker stop ${container_name}
 docker rm ${container_name}
@@ -18,12 +16,11 @@ docker pull ${reso_addr}:${tag}
 
 # 启动新容器，配置 etcd 连接参数
 docker run \
-  -p 10000:10000 \
-  -e POD_IP=${pod_idb} \
+  -p 8888:8888 \
   --name=${container_name} \
   -d ${reso_addr}:${tag}
 
 # 检查服务是否成功注册到etcd
 sleep 5
 echo "检查服务注册状态:"
-docker exec etcd etcdctl get --prefix "user.rpc"
+docker exec etcd etcdctl get --prefix "user.api"

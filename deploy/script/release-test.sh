@@ -1,7 +1,11 @@
 # shellcheck disable=SC2034
 need_start_server_shell=(
-# rpc
+    # rpc
     user-rpc-test.sh
+    social-rpc-test.sh
+    # api
+    user-api-test.sh
+    social-api-test.sh
 )
 
 for i in ${need_start_server_shell[*]}; do
