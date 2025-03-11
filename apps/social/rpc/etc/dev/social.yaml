@@ -2,7 +2,7 @@ Name: social.rpc
 ListenOn: 0.0.0.0:10001
 Etcd:
   Hosts:
-    - 192.168.232.12:3379
+  - 192.168.232.12:3379
   Key: social.rpc
 Mysql:
   DataSource: root:hnz-chat@tcp(192.168.232.12:13306)/hnz-chat?charset=utf8mb4
