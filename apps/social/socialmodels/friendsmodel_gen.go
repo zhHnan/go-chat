@@ -107,10 +107,11 @@ func (m *defaultFriendsModel) Insert(ctx context.Context, data *Friends) (sql.Re
 	return ret, err
 }
 
-// 事务添加
+// 事务添
 func (m *defaultFriendsModel) InsertTrans(ctx context.Context, session sqlx.Session, data ...*Friends) (sql.Result, error) {
-	var (
+func (m *defaultFriendsModel) InsertTrans(ctx context.Context, session sqlx.Session, data ...*Friends) (sql.Result, error){
 		sql  strings.Builder
+		sql strings.Builder
 		args []any
 	)
 
@@ -121,8 +122,8 @@ func (m *defaultFriendsModel) InsertTrans(ctx context.Context, session sqlx.Sess
 	sql.WriteString(fmt.Sprintf("insert into %s (%s) values ", m.table, friendsRowsExpectAutoSet))
 	for i, item := range data {
 		sql.WriteString("(?, ?, ?, ?, ?)")
-		args = append(args, item.UserId, item.FriendUid, item.Remark, item.AddSource, item.CreatedAt)
 		if i != len(data)-1 {
+		if i != len(data) - 1 {
 			sql.WriteString(",")
 		}
 	}
@@ -152,7 +153,7 @@ func (m *defaultFriendsModel) tableName() string {
 
 // FindByUidAndFid 根据uid和friendUid查询用户
 func (m *defaultFriendsModel) FindByUidAndFid(ctx context.Context, userId, friendUid string) (*Friends, error) {
-	query := fmt.Sprintf("select %s from %s where `user_id` = ? and `friend_id` = ? ", friendsRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? and `friend_uid` = ? ", friendsRows, m.table)
 	var resp Friends
 	err := m.QueryRowNoCacheCtx(ctx, &resp, query, userId, friendUid)
 	switch err {
