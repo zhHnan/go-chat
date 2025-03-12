@@ -94,10 +94,18 @@ func (m *defaultGroupsModel) FindOne(ctx context.Context, id string) (*Groups, e
 	}
 }
 func (m *defaultGroupsModel) ListByGroupIds(ctx context.Context, ids []string) ([]*Groups, error) {
-	query := fmt.Sprintf("select %s from %s where `id` in (?)", groupsRows, m.table)
+	// 构建 IN 查询的占位符
+	placeholders := make([]string, len(ids))
+	args := make([]interface{}, len(ids))
+	for i, id := range ids {
+		placeholders[i] = "?"
+		args[i] = id
+	}
+	// 使用 strings.Join 来构建占位符字符串
+	inClause := strings.Join(placeholders, ",")
+	query := fmt.Sprintf("select %s from %s where `id` in (%s)", groupsRows, m.table, inClause)
 	var resp []*Groups
-	idStr := strings.Join(ids, "','")
-	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, idStr)
+	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, args...)
 	switch err {
 	case nil:
 		return resp, nil
