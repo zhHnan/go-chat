@@ -1,4 +1,5 @@
 Name: social.rpc
+Timeout: 10000
 ListenOn: 0.0.0.0:10001
 Etcd:
   Hosts:

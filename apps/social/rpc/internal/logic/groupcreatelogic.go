@@ -38,7 +38,8 @@ func (l *GroupCreateLogic) GroupCreate(in *social.GroupCreateReq) (*social.Group
 		CreatorUid: in.CreatorUid,
 		IsVerify:   false,
 	}
-	l.svcCtx.GroupsModel.Trans(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	// 修改这里：处理Trans返回的错误
+	err := l.svcCtx.GroupsModel.Trans(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		_, err := l.svcCtx.GroupsModel.Insert(ctx, session, groups)
 		if err != nil {
 			return errors.Wrapf(xerr.NewDBErr(), "groups insert err %v, req %v", err, groups)
@@ -53,5 +54,13 @@ func (l *GroupCreateLogic) GroupCreate(in *social.GroupCreateReq) (*social.Group
 		}
 		return nil
 	})
-	return &social.GroupCreateResp{}, nil
+	// 添加错误处理
+	if err != nil {
+		l.Logger.Errorf("创建群组失败: %v", err)
+		return nil, errors.Wrapf(xerr.NewDBErr(), "create group failed: %v", err)
+	}
+	// 返回创建的群组ID
+	return &social.GroupCreateResp{
+		Id: groups.Id,
+	}, nil
 }
