@@ -27,14 +27,21 @@ func NewFriendListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Friend
 }
 
 func (l *FriendListLogic) FriendList(in *social.FriendListReq) (*social.FriendListResp, error) {
-	// todo: add your logic here and delete this line
+	// 获取好友列表
 	friendList, err := l.svcCtx.FriendsModel.ListByUserId(l.ctx, in.UserId)
 	if err != nil {
+		l.Logger.Errorf("获取好友列表失败: %v, userId: %s", err, in.UserId)
 		return nil, errors.Wrapf(xerr.NewDBErr(), "list friends by userId err %v req %v", err, in.UserId)
 	}
+	// 转换结果
 	var res []*social.Friends
-	copier.Copy(&res, friendList)
-
+	if len(friendList) > 0 {
+		err = copier.Copy(&res, friendList)
+		if err != nil {
+			l.Logger.Errorf("复制好友列表失败: %v", err)
+			return nil, errors.Wrapf(xerr.NewDBErr(), "copy friends list err %v", err)
+		}
+	}
 	return &social.FriendListResp{
 		List: res,
 	}, nil

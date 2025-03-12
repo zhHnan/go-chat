@@ -60,17 +60,19 @@ func newFriendsModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option)
 }
 
 func (m *defaultFriendsModel) ListByUserId(ctx context.Context, userId string) ([]*Friends, error) {
-	query := fmt.Sprintf("select %s from %s where `user_id` = ?", friendsRows, m.table)
 	var res []*Friends
+	query := fmt.Sprintf("select %s from %s where `user_id` = ?", friendsRows, m.table)
+
+	// 使用QueryRowsNoCacheCtx查找多条数据
 	err := m.QueryRowsNoCacheCtx(ctx, &res, query, userId)
-	switch err {
-	case nil:
-		return res, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
+	if err != nil {
 		return nil, err
 	}
+	// 如果没有找到记录，返回空切片而不是错误
+	if len(res) == 0 {
+		return []*Friends{}, nil
+	}
+	return res, nil
 }
 func (m *defaultFriendsModel) Delete(ctx context.Context, id uint64) error {
 	friendsIdKey := fmt.Sprintf("%s%v", cacheFriendsIdPrefix, id)
