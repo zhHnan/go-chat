@@ -46,6 +46,20 @@ services:
     networks:
       hnz-chat:
 
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - 47017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: hnz-chat
+    volumes:
+      - ./components/mongo/data:/data/db
+      - /etc/localtime:/etc/localtime
+    restart: always
+    networks:
+      hnz-chat:
 networks:
   hnz-chat:
       driver: bridge

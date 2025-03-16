@@ -1,0 +1,9 @@
+Name: im.ws
+ListenOn: 0.0.0.0:10090
+
+JwtAuth:
+  AccessSecret: hnz.com.cn
+
+Mongo:
+  Url: mongodb://root:hnz-chat@192.168.232.12:47017
+  Db: hnz-chat
