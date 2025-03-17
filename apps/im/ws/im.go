@@ -26,7 +26,7 @@ func main() {
 
 	handler.RegisterHandlers(srv, ctx)
 
-	fmt.Println("Starting server at %s...\n", c.ListenOn, "......")
+	fmt.Printf("Starting server at %s...\n", c.ListenOn, "......")
 	srv.Start()
 
 }

@@ -29,11 +29,11 @@ func Chat(svc *svc.ServiceContext) websocket.HandlerFunc {
 			srv.SendByUserId(websocket.NewMessage(conn.Uid, ws.Chat{
 				ChatType:       data.ChatType,
 				ConversationId: data.ConversationId,
-				SendId:         data.SendId,
+				SendId:         conn.Uid,
 				ReceiveId:      data.ReceiveId,
-				SendTime:       time.Now().Unix(),
+				SendTime:       time.Now().UnixMilli(),
 				Msg:            data.Msg,
-			}), data.SendId)
+			}), data.ReceiveId)
 		}
 	}
 }
