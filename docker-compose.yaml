@@ -78,6 +78,8 @@ services:
   kafka:
     image: wurstmeister/kafka
     container_name: kafka
+    depends_on:
+      - zookeeper
     restart: always
     ports:
       - "9092:9092"
@@ -91,9 +93,9 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_LISTENERS: INSIDE://:9092
       KAFKA_HEAP_OPTS: "-Xmx512M -Xms256M"
-      depends_on: zookeeper
     networks:
       hnz-chat:
+
 networks:
   hnz-chat:
-      driver: bridge
+    driver: bridge
