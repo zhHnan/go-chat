@@ -1,10 +1,11 @@
 package websocket
 
 import (
-	"github.com/gorilla/websocket"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 type Conn struct {
@@ -33,6 +34,8 @@ func NewConn(s *Server, w http.ResponseWriter, r *http.Request) *Conn {
 		maxConnectionIdle: defaultMaxConnectionIdle,
 		done:              make(chan struct{}),
 	}
+	// 启动keepAlive协程来保持连接活跃
+	go conn.keepAlive()
 	return conn
 }
 

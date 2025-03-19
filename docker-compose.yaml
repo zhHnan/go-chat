@@ -62,19 +62,28 @@ services:
       hnz-chat:
   #    zookeeper
   zookeeper:
-    image: wurstmeister/zookeeper
+    image: zookeeper:latest
     ports:
       - 2181:2181
     container_name: zookeeper
     volumes:
       - /etc/localtime:/etc/localtime
+      - ./components/zookeeper/data:/data
+      - ./components/zookeeper/datalog:/datalog
     environment:
       TZ: Asia/Shanghai
+      ZOO_MY_ID: 1
+      ZOO_PORT: 2181
+      ZOO_SERVERS: server.1=zookeeper:2888:3888;2181
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOO_MAX_CLIENT_CNXNS: 0  # 禁用连接数限制
+      KAFKA_HEAP_OPTS: "-Xmx1g -Xms1g"  # 内存分配
+    ulimits:
+      nofile: 65536  # 文件描述符限制
     restart: always
     networks:
       hnz-chat:
 
-  # kafka
   kafka:
     image: wurstmeister/kafka
     container_name: kafka
@@ -83,6 +92,7 @@ services:
     restart: always
     ports:
       - "9092:9092"
+      - "9093:9093"
     environment:
       TZ: Asia/Shanghai
       KAFKA_BROKER_ID: 0
@@ -92,7 +102,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT"
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_LISTENERS: INSIDE://:9092
-      KAFKA_HEAP_OPTS: "-Xmx512M -Xms256M"
+      KAFKA_HEAP_OPTS: "-Xmx512M -Xms512M"
     networks:
       hnz-chat:
 

@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
-	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
 	"sync"
+
+	"github.com/gorilla/websocket"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type Server struct {
@@ -44,20 +45,29 @@ func NewServer(addr string, opts ...ServerOptions) *Server {
 }
 func (s *Server) addConn(conn *Conn, req *http.Request) {
 	uid := s.authentication.UserId(req)
+	s.Infof("用户尝试连接: %s", uid)
 	s.RWMutex.Lock()
 	defer s.RWMutex.Unlock()
 	if c := s.userToConn[uid]; c != nil {
 		// 关闭之前的连接
+		s.Infof("关闭用户之前的连接: %s", uid)
 		c.Close()
 	}
 	s.connToUser[conn] = uid
 	s.userToConn[uid] = conn
+	s.Infof("用户连接成功: %s, 当前连接数量: %d", uid, len(s.connToUser))
 }
 
 func (s *Server) GetConn(uid string) *Conn {
 	s.RWMutex.Lock()
 	defer s.RWMutex.Unlock()
-	return s.userToConn[uid]
+	conn := s.userToConn[uid]
+	if conn == nil {
+		s.Infof("获取连接失败，用户 %s 不存在", uid)
+		// 打印当前所有在线用户，帮助调试
+		s.Infof("当前在线用户: %v", s.GetUsers())
+	}
+	return conn
 }
 func (s *Server) ServerWs(w http.ResponseWriter, r *http.Request) {
 	defer func() {
@@ -65,9 +75,13 @@ func (s *Server) ServerWs(w http.ResponseWriter, r *http.Request) {
 			s.Errorf("Server handler ws recover err %v", r)
 		}
 	}()
+	// 记录连接尝试
+	s.Infof("收到WebSocket连接请求: %s", r.URL.String())
+
 	// 升级协议，获取连接对象
 	conn := NewConn(s, w, r)
 	if conn == nil {
+		s.Errorf("创建连接对象失败")
 		return
 	}
 	//conn, err := s.upgrader.Upgrade(w, r, nil)
@@ -77,9 +91,13 @@ func (s *Server) ServerWs(w http.ResponseWriter, r *http.Request) {
 	//}
 	if !s.authentication.Auth(w, r) {
 		//conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("forbidden visit")))
+		s.Errorf("认证失败，拒绝连接")
 		s.Send(&Message{FrameType: FrameData, Data: fmt.Sprint("forbidden visit")}, conn)
 		conn.Close()
+		return
 	}
+
+	s.Infof("认证成功，添加连接")
 	// 记录连接
 	s.addConn(conn, r)
 	// 根据连接对象创建客户端对象
@@ -89,12 +107,23 @@ func (s *Server) ServerWs(w http.ResponseWriter, r *http.Request) {
 
 // 根据连接对象执行任务处理
 func (s *Server) handlerConn(conn *Conn) {
+	s.Infof("开始处理连接...")
 	// 此方法用于检索与特定连接相关联的所有用户ID
 	uids := s.GetUsers(conn)
+	s.Infof("连接关联的用户ID: %v", uids)
 	// 设置连接的用户ID为用户ID列表中的第一个ID
 	// 这里假设uids数组非空，且conn对象具有uid属性
+	if len(uids) == 0 {
+		s.Errorf("未找到连接对应的用户ID，关闭连接")
+		s.Close(conn)
+		return
+	}
+
 	conn.Uid = uids[0]
+	s.Infof("设置连接用户ID: %s", conn.Uid)
+
 	for {
+		s.Infof("等待消息...")
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
 			s.Errorf("websocket connection read message err %v", err)
@@ -186,7 +215,7 @@ func (s *Server) Send(msg interface{}, conns ...*Conn) error {
 }
 func (s *Server) Start() {
 	http.HandleFunc(s.patten, s.ServerWs)
-	fmt.Println("starting server at %s", s.addr)
+	fmt.Printf("starting server at %s", s.addr)
 	s.Info(http.ListenAndServe(s.addr, nil))
 }
 

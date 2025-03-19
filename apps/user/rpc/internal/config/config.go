@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
@@ -14,5 +15,6 @@ type Config struct {
 		AccessSecret string
 		AccessExpire int64
 	}
-	Cache cache.CacheConf
+	Cache  cache.CacheConf
+	Redisx redis.RedisConf
 }

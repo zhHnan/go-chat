@@ -7,3 +7,8 @@ JwtAuth:
 Mongo:
   Url: mongodb://root:hnz-chat@192.168.232.12:47017
   Db: hnz-chat
+
+MsgChatTransfer: # 消息转发
+  Topic: msgTransfer
+  Addrs:
+    - 192.168.232.12:9092

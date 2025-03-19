@@ -28,7 +28,11 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
-
+	// 写入token
+	err := ctx.SetRootToken()
+	if err != nil {
+		panic(err)
+	}
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		user.RegisterUserServer(grpcServer, server.NewUserServer(ctx))
 

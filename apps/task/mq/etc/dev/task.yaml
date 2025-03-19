@@ -1,0 +1,23 @@
+Name: task.mq
+ListenOn: 0.0.0.0:10091
+
+MsgChatTransfer: # 消息转发
+  Name: MsgChatTransfer
+  Brokers:
+    - 192.168.232.12:9092
+  Topic: msgTransfer
+  Group: kafka
+  Offset: first
+  Consumers: 1
+
+Mongo:
+  Url: mongodb://root:hnz-chat@192.168.232.12:47017
+  Db: hnz-chat
+
+Redisx:
+  Host: 192.168.232.12:16379
+  Type: node
+  Pass: hnz-chat
+
+Ws:
+  Host: 127.0.0.1:10090

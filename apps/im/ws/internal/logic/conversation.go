@@ -28,7 +28,7 @@ func (l *Conversation) SingleChat(data *ws.Chat, userId string) error {
 	if data.ConversationId == "" {
 		data.ConversationId = wuid.CombineId(userId, data.ReceiveId)
 	}
-	chatLog := &immodels.ChatLog{
+	chatLog := immodels.ChatLog{
 		ConversationId: data.ConversationId,
 		SendId:         userId,
 		ReceiveId:      data.ReceiveId,
@@ -36,8 +36,8 @@ func (l *Conversation) SingleChat(data *ws.Chat, userId string) error {
 		ChatType:       data.ChatType,
 		MsgType:        data.MType,
 		MsgContent:     data.Content,
-		SendTime:       time.Now().Unix(),
+		SendTime:       time.Now().UnixNano(),
 	}
-	err := l.svc.ChatLogModel.Insert(l.ctx, chatLog)
+	err := l.svc.ChatLogModel.Insert(l.ctx, &chatLog)
 	return err
 }
