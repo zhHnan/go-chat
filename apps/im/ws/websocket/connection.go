@@ -8,6 +8,25 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+type AckType int
+
+const (
+	NoAck AckType = iota
+	OnlyAck
+	RigorAck
+)
+
+func (t AckType) ToString() string {
+	switch t {
+	case OnlyAck:
+		return "OnlyAck"
+	case RigorAck:
+		return "RigorA"
+	default:
+		return "NoAck"
+	}
+}
+
 type Conn struct {
 	idleMu sync.Mutex
 	Uid    string
@@ -19,6 +38,14 @@ type Conn struct {
 	maxConnectionIdle time.Duration
 	// 停止信号
 	done chan struct{}
+	// 并发控制
+	messageMu sync.Mutex
+	// 读取消息
+	readMessage []*Message
+	// 读取消息序列化
+	readMessageSeq map[string]*Message
+	// 用于在readAck 与 handlerWrite 之间传递消息
+	message chan *Message
 }
 
 func NewConn(s *Server, w http.ResponseWriter, r *http.Request) *Conn {
@@ -28,15 +55,48 @@ func NewConn(s *Server, w http.ResponseWriter, r *http.Request) *Conn {
 		return nil
 	}
 	conn := &Conn{
-		Conn:              c,
-		s:                 s,
-		idle:              time.Now(),
+		Conn: c,
+		s:    s,
+		idle: time.Now(),
+		// readMessage 是一个用于存储已读取消息的切片，初始化时容量为2，意味着预期少量消息即可被读取。
+		readMessage: make([]*Message, 0, 2),
+		// readMessageSeq 是一个映射，用于根据消息序列号快速检索已读取的消息，预设容量为2，优化初始查找性能。
+		readMessageSeq: make(map[string]*Message, 2),
+		// message 是一个带缓冲的通道，用于在goroutine之间传递Message对象，缓冲区大小为1，确保一定程度的消息流通不会阻塞发送者。
+		message: make(chan *Message, 1),
+		// maxConnectionIdle 指定了最大空闲连接数，被设置为默认值defaultMaxConnectionIdle，用于控制空闲连接的数量，避免资源浪费。
 		maxConnectionIdle: defaultMaxConnectionIdle,
 		done:              make(chan struct{}),
 	}
 	// 启动keepAlive协程来保持连接活跃
 	go conn.keepAlive()
 	return conn
+}
+func (c *Conn) appendMsgMq(msg *Message) {
+	c.messageMu.Lock()
+	defer c.messageMu.Unlock()
+	if m, ok := c.readMessageSeq[msg.Id]; ok {
+		if len(c.readMessage) == 0 {
+			// 如果切片为空，则直接返回，因为消息序列号已经存在但切片为空，无法找到对应的消息。
+			return
+		}
+		// msg.Ack > m.Ack
+		if msg.AckSeq <= m.AckSeq {
+			// 如果消息序列号已经存在，但消息的AckSeq小于等于已存在的消息的AckSeq，则返回，
+			// 因为新消息的AckSeq应该大于已存在的消息的AckSeq。
+			return
+		}
+		// 更新映射中的消息
+		c.readMessageSeq[msg.Id] = msg
+		return
+	}
+	if msg.FrameType == FrameAck {
+		// 如果消息类型为FrameAck，则从切片和映射中删除该消息。
+		return
+	}
+	// 如果消息序列号不存在，则将消息添加到切片和映射中。
+	c.readMessage = append(c.readMessage, msg)
+	c.readMessageSeq[msg.Id] = msg
 }
 
 // keepAlive 是一个维护连接活跃状态的方法，它属于 Conn 类型。

@@ -1,5 +1,7 @@
 package websocket
 
+import "time"
+
 type FrameType uint8
 
 const (
@@ -9,14 +11,20 @@ const (
 	//FrameRSTStream FrameType = 0x3
 	//FrameSettings FrameType = 0x4
 	//FramePushPromise FrameType = 0x5
-	FramePing FrameType = 0x1
-	FrameErr  FrameType = 0x9
+	FramePing  FrameType = 0x1
+	FrameAck   FrameType = 0x2
+	FrameNoAck FrameType = 0x3
+	FrameErr   FrameType = 0x9
 	//FrameGoAway FrameType = 0x7
 	//FrameWindowUpdate FrameType = 0x8
 )
 
 type Message struct {
 	FrameType `json:"frameType"`
+	Id        string      `json:"id"`
+	AckSeq    int         `json:"ackSeq"`
+	ackTime   time.Time   `json:"ackTime"`
+	errCount  int         `json:"errCount"`
 	Method    string      `json:"method"`
 	FormId    string      `json:"formId"`
 	Data      interface{} `json:"data"` // interface{}
