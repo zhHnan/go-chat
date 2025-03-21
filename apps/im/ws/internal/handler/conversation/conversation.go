@@ -7,6 +7,7 @@ import (
 	"go-chat/apps/im/ws/ws"
 	"go-chat/apps/task/mq/mq"
 	"go-chat/pkg/constants"
+	"time"
 )
 
 func Chat(svc *svc.ServiceContext) websocket.HandlerFunc {
@@ -24,7 +25,7 @@ func Chat(svc *svc.ServiceContext) websocket.HandlerFunc {
 				ConversationId: data.ConversationId,
 				SendId:         conn.Uid,
 				ReceiveId:      data.ReceiveId,
-				SendTime:       data.SendTime,
+				SendTime:       time.Now().UnixNano(),
 				MType:          data.Msg.MType,
 				Content:        data.Msg.Content,
 			})
