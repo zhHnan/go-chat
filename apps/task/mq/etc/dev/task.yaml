@@ -21,3 +21,8 @@ Redisx:
 
 Ws:
   Host: 127.0.0.1:10090
+SocialRpc:
+  Etcd:
+    Hosts:
+      - 192.168.232.12:3379
+    Key: social.rpc
