@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/threading"
 	"net/http"
 	"sync"
 	"time"
@@ -25,6 +26,7 @@ type Server struct {
 	userToConn map[string]*Conn
 	upgrader   websocket.Upgrader
 	logx.Logger
+	*threading.TaskRunner
 }
 
 func (s *Server) AddRoute(rs []Route) {
@@ -44,6 +46,7 @@ func NewServer(addr string, opts ...ServerOptions) *Server {
 		Logger:         logx.WithContext(context.Background()),
 		connToUser:     make(map[*Conn]string),
 		userToConn:     make(map[string]*Conn),
+		TaskRunner:     threading.NewTaskRunner(opt.concurrency),
 	}
 }
 func (s *Server) addConn(conn *Conn, req *http.Request) {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go-chat/apps/im/immodels"
 	"go-chat/apps/im/ws/websocket"
+	"go-chat/apps/social/rpc/socialclient"
 	"go-chat/apps/task/mq/internal/svc"
 	"go-chat/apps/task/mq/mq"
 	"go-chat/pkg/constants"
@@ -43,7 +44,61 @@ func (m *MsgChatTransfer) Consume(ctx context.Context, key, value string) error 
 		m.Logger.Errorf("Failed to add chat log: %v", err)
 		return err
 	}
+	switch data.ChatType {
+	case constants.PrivateChatType:
+		// 单聊
+		return m.single(&data)
+	case constants.GroupChatType:
+		// 群聊
+		return m.group(ctx, &data)
+	}
+	return nil
 
+}
+
+func (m *MsgChatTransfer) addChatLog(ctx context.Context, data *mq.MsgChatTransfer) error {
+	chatLog := immodels.ChatLog{
+		ConversationId: data.ConversationId,
+		SendId:         data.SendId,
+		ReceiveId:      data.ReceiveId,
+		MsgFrom:        0,
+		ChatType:       data.ChatType,
+		MsgType:        data.MType,
+		MsgContent:     data.Content,
+		SendTime:       time.Now().UnixNano(),
+	}
+	err := m.svc.ChatLogModel.Insert(ctx, &chatLog)
+	if err != nil {
+		return err
+	}
+
+	return m.svc.ConversationModel.UpdateMsg(ctx, &chatLog)
+}
+func (m *MsgChatTransfer) group(ctx context.Context, data *mq.MsgChatTransfer) error {
+	// 查询群的用户
+	users, err := m.svc.Social.GroupUsers(ctx, &socialclient.GroupUsersReq{
+		GroupId: data.ReceiveId,
+	})
+	if err != nil {
+		return err
+	}
+	data.ReceiveIds = make([]string, 0, len(users.List))
+
+	for _, member := range users.List {
+		// 跳过发送者
+		if member.UserId == data.SendId {
+			continue
+		}
+		data.ReceiveIds = append(data.ReceiveIds, member.UserId)
+	}
+	return m.svc.WsClient.Send(websocket.Message{
+		FrameType: websocket.FrameData,
+		Method:    "push",
+		FormId:    constants.SYSTEM_ROOT_UID,
+		Data:      data,
+	})
+}
+func (m *MsgChatTransfer) single(data *mq.MsgChatTransfer) error {
 	// 记录发送的消息内容
 	message := websocket.Message{
 		FrameType: websocket.FrameData,
@@ -65,23 +120,4 @@ func (m *MsgChatTransfer) Consume(ctx context.Context, key, value string) error 
 	}
 	m.Logger.Info("推送消息成功")
 	return nil
-}
-
-func (m *MsgChatTransfer) addChatLog(ctx context.Context, data *mq.MsgChatTransfer) error {
-	chatLog := immodels.ChatLog{
-		ConversationId: data.ConversationId,
-		SendId:         data.SendId,
-		ReceiveId:      data.ReceiveId,
-		MsgFrom:        0,
-		ChatType:       data.ChatType,
-		MsgType:        data.MType,
-		MsgContent:     data.Content,
-		SendTime:       time.Now().UnixNano(),
-	}
-	err := m.svc.ChatLogModel.Insert(ctx, &chatLog)
-	if err != nil {
-		return err
-	}
-
-	return m.svc.ConversationModel.UpdateMsg(ctx, &chatLog)
 }

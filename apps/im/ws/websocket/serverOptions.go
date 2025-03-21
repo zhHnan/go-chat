@@ -11,6 +11,8 @@ type serverOptions struct {
 	ackTimeout time.Duration
 	Authentication
 	maxConnectionIdle time.Duration
+	// 并发 默认10
+	concurrency int
 }
 
 func newServerOptions(opts ...ServerOptions) serverOptions {
@@ -19,6 +21,7 @@ func newServerOptions(opts ...ServerOptions) serverOptions {
 		maxConnectionIdle: defaultMaxConnectionIdle,
 		ackTimeout:        defaultAckTimeout,
 		Authentication:    new(authentication),
+		concurrency:       defaultConcurrency,
 	}
 	for _, opt := range opts {
 		opt(&so)

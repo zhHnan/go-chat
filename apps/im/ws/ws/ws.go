@@ -30,9 +30,10 @@ type (
 		ConversationId     string `mapstructure:"conversationId" json:"conversationId"`
 		constants.ChatType `mapstructure:"chatType" json:"chatType"`
 		constants.MType    `mapstructure:"mtype" json:"mtype"`
-		SendId             string `mapstructure:"sendId" json:"sendId"`
-		SendTime           int64  `mapstructure:"sendTime" json:"sendTime"`
-		ReceiveId          string `mapstructure:"receiveId" json:"receiveId"`
-		Content            string `mapstructure:"content" json:"content"`
+		SendId             string   `mapstructure:"sendId" json:"sendId"`
+		SendTime           int64    `mapstructure:"sendTime" json:"sendTime"`
+		ReceiveId          string   `mapstructure:"receiveId" json:"receiveId"`
+		ReceiveIds         []string `mapstructure:"receiveIds" json:"receiveIds"`
+		Content            string   `mapstructure:"content" json:"content"`
 	}
 )
