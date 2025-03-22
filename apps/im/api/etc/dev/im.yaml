@@ -1,11 +1,23 @@
 Name: im
 Host: 0.0.0.0
-Port: 8885
+Port: 8882
 
 ImRpc:
   Etcd:
     Hosts:
       - 192.168.232.12:3379
     Key: im.rpc
+
+UserRpc:
+  Etcd:
+    Hosts:
+      - 192.168.232.12:3379
+    Key: user.rpc
+
+SocialRpc:
+  Etcd:
+    Hosts:
+      - 192.168.232.12:3379
+    Key: social.rpc
 JwtAuth:
   AccessSecret: hnz.com.cn

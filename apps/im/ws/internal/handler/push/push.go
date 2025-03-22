@@ -97,8 +97,10 @@ func single(srv *websocket.Server, data *ws.Push, receiveId string) error {
 		ChatType:       data.ChatType,
 		SendTime:       data.SendTime,
 		Msg: ws.Msg{
-			Content: data.Content,
-			MType:   data.MType,
+			MsgId:       data.MsgId,
+			ReadRecords: data.ReadRecords,
+			Content:     data.Content,
+			MType:       data.MType,
 		},
 	})
 	// 添加调试日志

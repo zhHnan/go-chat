@@ -11,11 +11,17 @@ type Config struct {
 	service.ServiceConf
 	ListenOn        string
 	MsgChatTransfer kq.KqConf
+	MsgReadTransfer kq.KqConf
 	Redisx          redis.RedisConf
 	SocialRpc       zrpc.RpcClientConf
 	Mongo           struct {
 		Url string
 		Db  string
+	}
+	MsgReadHandler struct {
+		GroupMsgReadHandler          int
+		GroupMsgReadRecordDelayTime  int64
+		GroupMsgReadRecordDelayCount int
 	}
 	Ws struct {
 		Host string
