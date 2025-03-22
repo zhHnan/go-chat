@@ -8,8 +8,10 @@ import "go-chat/pkg/constants"
 // Content字段保存了消息的具体内容。
 type (
 	Msg struct {
+		MsgId           string `mapstructure:"msgId"`
 		constants.MType `mapstructure:"mtype" json:"mtype"`
-		Content         string `mapstructure:"content" json:"content"`
+		ReadRecords     map[string]string `mapstructure:"readRecords" json:"readRecords"`
+		Content         string            `mapstructure:"content" json:"content"`
 	}
 
 	// Chat 定义了一个聊天消息的结构体，包括会话ID、发送者ID、接收者ID、消息内容和发送时间。
@@ -30,10 +32,20 @@ type (
 		ConversationId     string `mapstructure:"conversationId" json:"conversationId"`
 		constants.ChatType `mapstructure:"chatType" json:"chatType"`
 		constants.MType    `mapstructure:"mtype" json:"mtype"`
-		SendId             string   `mapstructure:"sendId" json:"sendId"`
-		SendTime           int64    `mapstructure:"sendTime" json:"sendTime"`
+		SendId             string                `mapstructure:"sendId" json:"sendId"`
+		SendTime           int64                 `mapstructure:"sendTime" json:"sendTime"`
+		ReceiveId          string                `mapstructure:"receiveId" json:"receiveId"`
+		ReceiveIds         []string              `mapstructure:"receiveIds" json:"receiveIds"`
+		Content            string                `mapstructure:"content" json:"content"`
+		MsgId              string                `mapstructure:"msgId" json:"msgId"`
+		ReadRecords        map[string]string     `mapstructure:"readRecords" json:"readRecords"`
+		ContentType        constants.ContentType `mapstructure:"contentType" json:"contentType"`
+	}
+
+	MarkRead struct {
+		constants.ChatType `mapstructure:"chatType" json:"chatType"`
 		ReceiveId          string   `mapstructure:"receiveId" json:"receiveId"`
-		ReceiveIds         []string `mapstructure:"receiveIds" json:"receiveIds"`
-		Content            string   `mapstructure:"content" json:"content"`
+		ConversationId     string   `mapstructure:"conversationId" json:"conversationId"`
+		MsgIds             []string `mapstructure:"msgIds" json:"msgIds"`
 	}
 )

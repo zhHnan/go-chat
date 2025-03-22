@@ -7,5 +7,17 @@ ImRpc:
     Hosts:
       - 192.168.232.12:3379
     Key: im.rpc
+
+UserRpc:
+  Etcd:
+    Hosts:
+      - 192.168.232.12:3379
+    Key: user.rpc
+
+SocialRpc:
+  Etcd:
+    Hosts:
+      - 192.168.232.12:3379
+    Key: social.rpc
 JwtAuth:
   AccessSecret: hnz.com.cn

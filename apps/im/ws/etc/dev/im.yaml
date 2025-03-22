@@ -9,6 +9,11 @@ Mongo:
   Db: hnz-chat
 
 MsgChatTransfer: # 消息转发
-  Topic: msgTransfer
+  Topic: msgChatTransfer
   Addrs:
     - 192.168.232.12:9092
+
+  MsgReadTransfer: # 消息转发
+    Topic: msgReadTransfer
+    Addrs:
+      - 192.168.232.12:9092

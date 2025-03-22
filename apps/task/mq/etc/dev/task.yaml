@@ -10,6 +10,15 @@ MsgChatTransfer: # 消息转发
   Offset: first
   Consumers: 1
 
+MsgReadTransfer: # 已读未读消息处理
+  Name: MsgReadTransfer
+  Brokers:
+    - 192.168.232.12:9092
+  Topic: msgReadTransfer
+  Group: kafka
+  Offset: first
+  Consumers: 1
+
 Mongo:
   Url: mongodb://root:hnz-chat@192.168.232.12:47017
   Db: hnz-chat
