@@ -1,0 +1,27 @@
+Name: social
+Host: 0.0.0.0
+Port: 8881
+
+SocialRpc:
+  Etcd:
+    Hosts:
+      - 192.168.232.12:3379
+    Key: social.rpc
+#    Endpoints:
+#      - localhost:10001  # 本地 social-rpc 服务地址
+    Timeout: 30000
+
+UserRpc:
+  Etcd:
+    Hosts:
+      - 192.168.232.12:3379
+    Key: user.rpc
+
+ImRpc:
+  Etcd:
+    Hosts:
+      - 192.168.232.12:3379
+    Key: im.rpc
+
+JwtAuth:
+  AccessSecret: hnz.com.cn

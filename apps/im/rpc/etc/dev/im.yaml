@@ -1,0 +1,10 @@
+Name: im.rpc
+ListenOn: 0.0.0.0:8080
+Etcd:
+  Hosts:
+  - 192.168.232.12:3379
+  Key: im.rpc
+
+Mongo:
+  Url: mongodb://root:hnz-chat@192.168.232.12:47017
+  Db: hnz-chat
