@@ -10,6 +10,13 @@ type FriendListResp struct {
 	List []*Friends `json:"list,omitempty"`
 }
 
+type FriendOnlineReq struct {
+}
+
+type FriendOnlineResp struct {
+	OnlineList map[string]bool `json:"onlineList"`
+}
+
 type FriendPutInHandleReq struct {
 	FriendReqId  int32 `json:"friend_req_id,omitempty"`
 	HandleResult int32 `json:"handle_result,omitempty"`
@@ -124,6 +131,14 @@ type GroupUserListReq struct {
 
 type GroupUserListResp struct {
 	List []*GroupMembers `json:"list,omitempty"`
+}
+
+type GroupUserOnlineReq struct {
+	GroupId string `json:"group_id,omitempty"`
+}
+
+type GroupUserOnlineResp struct {
+	OnlineList map[string]bool `json:"onlineList"`
 }
 
 type Groups struct {

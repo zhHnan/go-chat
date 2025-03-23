@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 	"go-chat/apps/im/rpc/imclient"
 	"go-chat/apps/social/api/internal/config"
@@ -13,6 +14,7 @@ type ServiceContext struct {
 	socialclient.Social
 	userclient.User
 	imclient.Im
+	Redis *redis.Redis
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -21,5 +23,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Social: socialclient.NewSocial(zrpc.MustNewClient(c.SocialRpc)),
 		User:   userclient.NewUser(zrpc.MustNewClient(c.UserRpc)),
 		Im:     imclient.NewIm(zrpc.MustNewClient(c.ImRpc)),
+		Redis:  redis.MustNewRedis(c.Redisx),
 	}
 }

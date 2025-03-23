@@ -140,6 +140,22 @@ type (
 	}
 )
 
+type (
+	FriendOnlineReq  {}
+	FriendOnlineResp {
+		OnlineList map[string]bool `json:"onlineList"`
+	}
+)
+
+type (
+	GroupUserOnlineReq {
+		GroupId string `json:"group_id,omitempty"`
+	}
+	GroupUserOnlineResp {
+		OnlineList map[string]bool `json:"onlineList"`
+	}
+)
+
 @server (
 	jwt:    JwtAuth
 	group:  friend
@@ -161,6 +177,10 @@ service social {
 	@doc "好友列表"
 	@handler friendList
 	get /friends (FriendListReq) returns (FriendListReq)
+
+	@doc "查询好友在线状态"
+	@handler friendsOnline
+	get /friends/online (FriendOnlineReq) returns (FriendOnlineResp)
 }
 
 @server (
@@ -192,5 +212,9 @@ service social {
 	@doc "群组用户列表"
 	@handler groupUserList
 	get /group/users (GroupUserListReq) returns (GroupUserListResp)
+
+	@doc "查询好友在线状态"
+	@handler groupUserOnline
+	get /group/users/online (GroupUserOnlineReq) returns (GroupUserOnlineResp)
 }
 

@@ -53,6 +53,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "generate token error %v", err)
 	}
 	return &user.LoginResp{
+		Id:     userEntity.Id,
 		Token:  token,
 		Expire: now + l.svcCtx.Config.Jwt.AccessExpire,
 	}, nil

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/jinzhu/copier"
 	"go-chat/apps/user/rpc/user"
+	"go-chat/pkg/constants"
 
 	"go-chat/apps/user/api/internal/svc"
 	"go-chat/apps/user/api/internal/types"
@@ -34,7 +35,10 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 	if err != nil {
 		return nil, err
 	}
+
 	var res types.LoginResp
 	copier.Copy(&res, loginResp)
+	// 处理登录的业务
+	l.svcCtx.Redis.HsetCtx(l.ctx, constants.REDIS_ONLINE_USER, loginResp.Id, "1")
 	return &res, nil
 }
