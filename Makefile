@@ -21,3 +21,9 @@ install-server:
 
 install-server-user-rpc:
 	@cd ./deploy/script && chmod +x user-rpc-test.sh && ./user-rpc-test.sh
+
+install-server-im-ws:
+	@cd ./deploy/script && chmod +x im-ws-test.sh && ./im-ws-test.sh
+
+install-server-task-mq:
+	@cd ./deploy/script && chmod +x task-mq-test.sh && ./task-mq-test.sh

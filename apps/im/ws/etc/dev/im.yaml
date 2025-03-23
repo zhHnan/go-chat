@@ -13,7 +13,7 @@ MsgChatTransfer: # 消息转发
   Addrs:
     - 192.168.232.12:9092
 
-  MsgReadTransfer: # 消息转发
-    Topic: msgReadTransfer
-    Addrs:
-      - 192.168.232.12:9092
+MsgReadTransfer: # 消息转发
+  Topic: msgReadTransfer
+  Addrs:
+    - 192.168.232.12:9092
