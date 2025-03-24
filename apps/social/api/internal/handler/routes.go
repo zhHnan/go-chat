@@ -52,50 +52,53 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// 创建群组
-				Method:  http.MethodPost,
-				Path:    "/create",
-				Handler: group.CreateGroupHandler(serverCtx),
-			},
-			{
-				// 申请入群
-				Method:  http.MethodPost,
-				Path:    "/group/putIn",
-				Handler: group.GroupPutInHandler(serverCtx),
-			},
-			{
-				// 申请进群处理
-				Method:  http.MethodPut,
-				Path:    "/group/putIn",
-				Handler: group.GroupPutInHandleHandler(serverCtx),
-			},
-			{
-				// 群组申请列表
-				Method:  http.MethodGet,
-				Path:    "/group/putIns",
-				Handler: group.GroupPutInListHandler(serverCtx),
-			},
-			{
-				// 群组用户列表
-				Method:  http.MethodGet,
-				Path:    "/group/users",
-				Handler: group.GroupUserListHandler(serverCtx),
-			},
-			{
-				// 查询好友在线状态
-				Method:  http.MethodGet,
-				Path:    "/group/users/online",
-				Handler: group.GroupUserOnlineHandler(serverCtx),
-			},
-			{
-				// 用户申请列表
-				Method:  http.MethodGet,
-				Path:    "/groups",
-				Handler: group.GroupListHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.IdempotenceMiddleware},
+			[]rest.Route{
+				{
+					// 创建群组
+					Method:  http.MethodPost,
+					Path:    "/create",
+					Handler: group.CreateGroupHandler(serverCtx),
+				},
+				{
+					// 申请入群
+					Method:  http.MethodPost,
+					Path:    "/group/putIn",
+					Handler: group.GroupPutInHandler(serverCtx),
+				},
+				{
+					// 申请进群处理
+					Method:  http.MethodPut,
+					Path:    "/group/putIn",
+					Handler: group.GroupPutInHandleHandler(serverCtx),
+				},
+				{
+					// 群组申请列表
+					Method:  http.MethodGet,
+					Path:    "/group/putIns",
+					Handler: group.GroupPutInListHandler(serverCtx),
+				},
+				{
+					// 群组用户列表
+					Method:  http.MethodGet,
+					Path:    "/group/users",
+					Handler: group.GroupUserListHandler(serverCtx),
+				},
+				{
+					// 查询好友在线状态
+					Method:  http.MethodGet,
+					Path:    "/group/users/online",
+					Handler: group.GroupUserOnlineHandler(serverCtx),
+				},
+				{
+					// 用户申请列表
+					Method:  http.MethodGet,
+					Path:    "/groups",
+					Handler: group.GroupListHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
 		rest.WithPrefix("/v1/social"),
 	)
