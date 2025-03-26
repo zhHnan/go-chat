@@ -10,7 +10,6 @@ import (
 	"go-chat/apps/user/rpc/userclient"
 	"go-chat/pkg/interceptor"
 	"go-chat/pkg/middleware"
-	"google.golang.org/grpc"
 )
 
 var retryPolicy = `{
@@ -32,6 +31,7 @@ var retryPolicy = `{
 type ServiceContext struct {
 	Config                config.Config
 	IdempotenceMiddleware rest.Middleware
+	LimitMiddleware       rest.Middleware
 	socialclient.Social
 	userclient.User
 	imclient.Im
@@ -42,8 +42,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:                c,
 		IdempotenceMiddleware: middleware.NewIdempotenceMiddleware().Handler,
-		Social: socialclient.NewSocial(zrpc.MustNewClient(c.SocialRpc, zrpc.WithDialOption(
-			grpc.WithDefaultServiceConfig(retryPolicy)), zrpc.WithUnaryClientInterceptor(interceptor.DefaultIdempotentClient))),
+		LimitMiddleware:       middleware.NewLimitMiddleware(c.Redisx).TokenLimitHandler(1, 100, "SOCIAL_LIMIT"),
+		Social: socialclient.NewSocial(zrpc.MustNewClient(c.SocialRpc,
+			//zrpc.WithDialOption(grpc.WithDefaultServiceConfig(retryPolicy)),
+			zrpc.WithUnaryClientInterceptor(interceptor.DefaultIdempotentClient))),
 		User:  userclient.NewUser(zrpc.MustNewClient(c.UserRpc)),
 		Im:    imclient.NewIm(zrpc.MustNewClient(c.ImRpc)),
 		Redis: redis.MustNewRedis(c.Redisx),

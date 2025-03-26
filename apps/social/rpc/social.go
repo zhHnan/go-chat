@@ -3,13 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"go-chat/pkg/interceptor"
-	"go-chat/pkg/interceptor/rpcserver"
-
 	"go-chat/apps/social/rpc/internal/config"
 	"go-chat/apps/social/rpc/internal/server"
 	"go-chat/apps/social/rpc/internal/svc"
 	"go-chat/apps/social/rpc/social"
+	"go-chat/pkg/interceptor"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
@@ -36,7 +34,7 @@ func main() {
 			reflection.Register(grpcServer)
 		}
 	})
-	s.AddUnaryInterceptors(rpcserver.LoginInterceptor, rpcserver.SyncxLimitInterceptor(10))
+	//s.AddUnaryInterceptors(rpcserver.LoginInterceptor, rpcserver.SyncxLimitInterceptor(10))
 	s.AddUnaryInterceptors(interceptor.NewIdempotentServer(interceptor.NewDefaultIdempotent(c.Cache[0].RedisConf)))
 	defer s.Stop()
 
