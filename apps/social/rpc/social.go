@@ -36,7 +36,7 @@ func main() {
 			reflection.Register(grpcServer)
 		}
 	})
-	s.AddUnaryInterceptors(rpcserver.LoginInterceptor)
+	s.AddUnaryInterceptors(rpcserver.LoginInterceptor, rpcserver.SyncxLimitInterceptor(10))
 	s.AddUnaryInterceptors(interceptor.NewIdempotentServer(interceptor.NewDefaultIdempotent(c.Cache[0].RedisConf)))
 	defer s.Stop()
 

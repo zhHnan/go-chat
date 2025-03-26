@@ -9,7 +9,7 @@ import (
 	"go-chat/apps/social/rpc/socialclient"
 	"go-chat/apps/user/rpc/userclient"
 	"go-chat/pkg/interceptor"
-	"go-chat/pkg/job/middleware"
+	"go-chat/pkg/middleware"
 	"google.golang.org/grpc"
 )
 
