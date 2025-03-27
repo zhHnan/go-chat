@@ -25,3 +25,8 @@ ImRpc:
 
 JwtAuth:
   AccessSecret: hnz.com.cn
+
+Telemetry:
+  Name: social.api
+  Endpoint: http://192.168.232.12:14268/api/traces
+  Batcher: jaeger

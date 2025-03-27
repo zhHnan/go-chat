@@ -105,6 +105,21 @@ services:
       KAFKA_HEAP_OPTS: "-Xmx512M -Xms512M"
     networks:
       hnz-chat:
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "9411:9411"
+
+    restart: always
+    networks:
+      hnz-chat:
 
 networks:
   hnz-chat:
