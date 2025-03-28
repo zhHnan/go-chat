@@ -19,3 +19,8 @@ Cache:
 Jwt:
   AccessSecret: hnz.com.cn
   AccessExpire: 8640000
+
+Telemetry:
+  Name: user.rpc
+  Endpoint: http://192.168.232.12:14268/api/traces
+  Batcher: jaeger
