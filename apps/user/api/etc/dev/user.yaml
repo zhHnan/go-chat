@@ -9,9 +9,9 @@ UserRpc:
     Key: user.rpc
 
 Redisx:
-  - Host: 192.168.232.12:16379
-    Type: node
-    Pass: hnz-chat
+  Host: 192.168.232.12:16379
+  Type: node
+  Pass: hnz-chat
 
 JwtAuth:
   AccessSecret: hnz.com.cn
