@@ -1,12 +1,48 @@
 package test
 
 import (
+	"context"
 	"fmt"
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"
+	"github.com/zeromicro/go-zero/core/trace"
+	"go.opentelemetry.io/otel/attribute"
+	codes2 "go.opentelemetry.io/otel/codes"
+	"google.golang.org/grpc/codes"
 	"testing"
 )
+
+var traceTestAttributeKey = attribute.Key("test.trace.desc")
+
+func StratAgent(name string) {
+	trace.StartAgent(trace.Config{
+		Name:     name,
+		Endpoint: "192.168.232.12:14268/api/traces",
+		Sampler:  1,
+		Batcher:  "jaeger",
+		Disabled: false,
+	})
+}
+func Test_tracers(t *testing.T) {
+	//t.Run("启动", func(t *testing.T) {
+	//	ctx, span := otel.Tracer(trace.TraceName).Start(context.Background(), "a")
+	//	span.SetStatus(codes2.Code(codes.OK), "")
+	//	t.Log("is recording", span.IsRecording())
+	//	exec(t, ctx, "exec", "exec")
+	//	span.End()
+	//})
+
+}
+func exec(t *testing.T, ctx context.Context, spanName, desc string) {
+	tracer := trace.TracerFromContext(ctx)
+	_, span := tracer.Start(ctx, spanName)
+	span.SetAttributes(traceTestAttributeKey.String(desc))
+	span.SetStatus(codes2.Code(codes.OK), "")
+	// 任务处理
+	t.Log("处理任务：traceId", span.SpanContext().TraceID().String())
+	t.Log("处理任务：spanId", span.SpanContext().SpanID().String())
+}
 
 // Test_jaeger 测试 Jaeger Tracer 的初始化和使用
 // 该测试函数配置 Jaeger Tracer，并创建一个或多个 Span 以模拟跟踪请求
