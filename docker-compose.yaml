@@ -132,6 +132,7 @@ services:
     container_name: elasticsearch
     restart: always
     environment:
+      - 'xpack.security.enabled=false'
       - 'cluster.name=elasticsearch'
       - 'discovery.type=single-node'
       - 'ES_JAVA_OPTS=-Xms1024m -Xmx1024m'
@@ -144,13 +145,34 @@ services:
     restart: always
     volumes:
       - /etc/localtime:/etc/localtime
-      - ./components/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ./components/kibana/kibana.yaml:/usr/share/kibana/config/kibana.yaml
     ports:
       - "5601:5601"
     depends_on:
       - elasticsearch
     links:
       - elasticsearch
+    environment:
+      # 通过环境变量注入密钥（二选一）
+      - ENCRYPTION_KEY=$(cat ./components/kibana/kibana-encryption-key.txt)
+    networks:
+      hnz-chat:
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./components/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./components/prometheus/data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+    restart: always
+    ports:
+      - 9090:9090
+    user: root
     networks:
       hnz-chat:
 
